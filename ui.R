@@ -1,14 +1,15 @@
 library(shiny)
 library(shinythemes)
 library(rsconnect)
+library(shinycssloaders)
 
 
-shinyUI <- navbarPage("SDM Results", fluid=TRUE, 
+shinyUI <- navbarPage("DSM Results", fluid=TRUE, 
   tabPanel("Fall-Run",
           fluidPage(
             theme = shinythemes::shinytheme("readable"), 
             includeCSS("www/styles.css"),
-            titlePanel("Fall Run DSM Results", windowTitle = "Fall Run DSM Results"),
+            titlePanel("Fall-Run DSM Results", windowTitle = "Fall-Run DSM Results"),
             fluidRow(
               column(width = 4, 
                      tags$h3("Percent Change from No Actions"),
@@ -29,11 +30,12 @@ shinyUI <- navbarPage("SDM Results", fluid=TRUE,
             )
           )), 
         
+  
   tabPanel("Spring-Run", 
            fluidPage(
              theme = shinythemes::shinytheme("readable"), 
              includeCSS("www/styles.css"),
-             titlePanel("Fall Run DSM Results", windowTitle = "Fall Run DSM Results"),
+             titlePanel("Spring-Run DSM Results", windowTitle = "Spring-Run DSM Results"),
              fluidRow(
                column(width = 4, 
                       tags$h3("Percent Change from No Actions"),
@@ -54,11 +56,12 @@ shinyUI <- navbarPage("SDM Results", fluid=TRUE,
              )
            )),
   
+  
     tabPanel("Winter-Run",
              fluidPage(
                theme = shinythemes::shinytheme("readable"), 
                includeCSS("www/styles.css"),
-               titlePanel("Fall Run DSM Results", windowTitle = "Fall Run DSM Results"),
+               titlePanel("Winter-Run DSM Results", windowTitle = "Winter-Run DSM Results"),
                fluidRow(
                  column(width = 4, 
                         tags$h3("Percent Change from No Actions"),
@@ -77,6 +80,13 @@ shinyUI <- navbarPage("SDM Results", fluid=TRUE,
                    tags$h3("Action Overview"),
                    DT::dataTableOutput("actions_summary"))
                )
+             )),
+  
+    tabPanel("About",
+               p(
+                 "This Shiny App allows users to look at Fall, Spring, and Winter-Run SDM results."
+# More text here                 
+             
              ))
 )
            
