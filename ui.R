@@ -84,7 +84,7 @@ shinyUI <- navbarPage("DSM Results", fluid=TRUE,
   
     tabPanel("About",
                p(
-                 "This Shiny App allows users to look at Fall, Spring, and Winter-Run SDM results."
+                 "This Shiny App allows users to look at Fall, Spring, and Winter-Run DSM results."
 # More text here                 
              
              ))
