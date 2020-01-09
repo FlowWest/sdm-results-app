@@ -6,39 +6,112 @@ library(plotly)
 library(stringr)
 library(DT)
 
-actions <- read_rds('data/actions.rds')
-diversity_groups <- read_rds('data/diversity_groups.rds')
-juv_biomass_chipps <- read_rds('data/juv_biomass_chipps.rds')
-nat_spawners <- read_rds('data/nat_spawners.rds')
-viability <- read_rds('data/viability.rds')
+actions <- bind_rows(
+  # read_rds('data/actions.rds'),
+  read_rds('data/fall-run-actions.rds')
+)
+
+# diversity_groups <- read_rds('data/diversity_groups.rds')
+juv_biomass_chipps <- bind_rows(
+  # read_rds('data/juv_biomass_chipps.rds'), 
+  read_rds('data/fall-run-juv-biomass-chipps.rds')
+)
+nat_spawners <- bind_rows(
+  # read_rds('data/nat_spawners.rds'), 
+  read_rds('data/fall-run-nat-spawners.rds')
+)
+# viability <- read_rds('data/viability.rds'fall_run_scenario_paths)
 
 watershed_order <- unique(actions$watershed)
 
+# TODO move this to a dataframe
 scenario_definitions <- c(
-  "No actions are undertaken to increase habitat or survival.",
-  "Annual maximization of inputs that result in maximum natural spawners",
-  "Annual minimization of inputs",
-  "Annual maximization of inputs that result in maximum natural spawners, with an additional requirement that at least one unit is expended in each of the four diversity groups each year.",
-  "Annual minimization of inputs, with an additional requirement that at least one unit is expended in each of the four diversity groups each year.",
-  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams without an active fish hatchery",
-  "Annual maximization of inputs that result in maximum natural spawners, with all units concentrated on streams with an active fish hatchery"
+  "No restoration actions taken on any Central Valley streams",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Battle. and Stanislaus ",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Deer, Clear, and Stanislaus",
+  "Restoration limited to in-channel Upper Sacramento, Butte, Lower Mid Sac, Feather, American, Mokelumne, Clear, and Stanislaus",
+  "Restoration limited to in-channel in Mainstem Sacramento only",
+  "Restoration limited to in-channel Upper Sac, Lower Mid Sac, Cow Creek and Clear",
+  "Restoration limited to in-channel Upper Sac, Lower Mid, and American with some maintenance in Clear and Butte",
+  "Restoration limited to floodplain Upper Sac, Upper Mid, Lower Mid, Lower Sac, and San Joaquin",
+  "Restoration optimized to increase Winter-run population every year (limited to locations where WR occur)",
+  "Restoration optimized to increase Spring-run population every year (limited to locations where SR occur)",
+  "Restoration limited to in-channel equally distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope",
+  "Restoration limited to in-channel distributed between Upper Mid, Deer, Butte, Clear, Mill, Battle, Antelope, with emphasis on Deer, Mill, and Antelope",
+  "Restoration optimized to increase Fall-run population every year (one action in each diversity group)",
+  "Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Calaveras)",
+  "Restoration optimized to increase Fall-run population every year (actions limited to Upper Sac, Lower Sac, American, Stanislaus, and Mokelumne)"
 )
 
-names(scenario_definitions) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
-                                 'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
-                                 'MaxAdults_onlyHatcheryStreams')
+names(scenario_definitions) <- c("No Restoration Actions", "1. In-Channel Only - Urkov", "2. In-Channel Only - Brown", 
+                                 "3. In-Channel Only - Bilski", "4. In-Channel Only - Mainstem Sac", 
+                                 "5. In-Channel Only - Berry", "6. In-Channel Only - Peterson", 
+                                 "7. Floodplain Only - Mainstem Sac", "8. Winter-run Optimized", 
+                                 "9. Spring-run Optimized", "10.1. Spring-run In-Channel - Phillis1", 
+                                 "10.2. Spring-run In-Channel - Phillis2", "11.1. Fall-run Diversity Group Optimized", 
+                                 "12.1. Fall-run Optimized - Beakes", "13.1. Fall-run Optimized - Bilski"
+)
 
-scenario_names <- c('No Actions', 'Maximum Adults', 'Minimum Adults', 'Maximum Adults with Diversity Groups',
-               'Minimum Adults with Diversity Groups', 'Maximum Adults with No Hatchery Streams',
-               'Maximum Adults with Only Hatchery Streams')
-names(scenario_names) <- c('NoActions', 'MaxAdults', 'MinAdults', 'MaxAdults_withDGs', 
-                      'MinAdults_withDGs', 'MaxAdults_NOHatcheryStreams', 
-                      'MaxAdults_onlyHatcheryStreams')
+scenario_names <- c("No Restoration Actions", "1. In-Channel Only - Urkov", "2. In-Channel Only - Brown", 
+                    "3. In-Channel Only - Bilski", "4. In-Channel Only - Mainstem Sac", 
+                    "5. In-Channel Only - Berry", "6. In-Channel Only - Peterson", 
+                    "7. Floodplain Only - Mainstem Sac", "8. Winter-run Optimized", 
+                    "9. Spring-run Optimized", "10.1. Spring-run In-Channel - Phillis1", 
+                    "10.2. Spring-run In-Channel - Phillis2", "11.1. Fall-run Diversity Group Optimized", 
+                    "12.1. Fall-run Optimized - Beakes", "13.1. Fall-run Optimized - Bilski"
+)
+
+names(scenario_names) <- c("No Restoration Actions", "1. In-Channel Only - Urkov", "2. In-Channel Only - Brown", 
+                           "3. In-Channel Only - Bilski", "4. In-Channel Only - Mainstem Sac", 
+                           "5. In-Channel Only - Berry", "6. In-Channel Only - Peterson", 
+                           "7. Floodplain Only - Mainstem Sac", "8. Winter-run Optimized", 
+                           "9. Spring-run Optimized", "10.1. Spring-run In-Channel - Phillis1", 
+                           "10.2. Spring-run In-Channel - Phillis2", "11.1. Fall-run Diversity Group Optimized", 
+                           "12.1. Fall-run Optimized - Beakes", "13.1. Fall-run Optimized - Bilski"
+)
 
 scenario_names_to_scenario <- names(scenario_names)
 names(scenario_names_to_scenario) <- as.character(scenario_names)
 
-actions_summary <- actions %>% 
+scenario_names_levels <- c(
+  "No Restoration Actions", 
+  "1. In-Channel Only - Urkov", 
+  "2. In-Channel Only - Brown", 
+  "3. In-Channel Only - Bilski", 
+  "4. In-Channel Only - Mainstem Sac", 
+  "5. In-Channel Only - Berry", 
+  "6. In-Channel Only - Peterson", 
+  "7. Floodplain Only - Mainstem Sac", 
+  "8. Winter-run Optimized", 
+  "9. Spring-run Optimized", 
+  "10.1. Spring-run In-Channel - Phillis1", 
+  "10.2. Spring-run In-Channel - Phillis2", 
+  "11.1. Fall-run Diversity Group Optimized", 
+  "12.1. Fall-run Optimized - Beakes", 
+  "13.1. Fall-run Optimized - Bilski"
+)
+
+action_summary_colnames <- c(
+  "Watershed",
+  "In-Channel Only - Urkov", 
+  "In-Channel Only - Brown", 
+  "In-Channel Only - Bilski", 
+  "In-Channel Only - Mainstem Sac", 
+  "In-Channel Only - Berry", 
+  "In-Channel Only - Peterson", 
+  "Floodplain Only - Mainstem Sac", 
+  "Winter-run Optimized", 
+  "Spring-run Optimized", 
+  "Spring-run In-Channel - Phillis1", 
+  "Spring-run In-Channel - Phillis2", 
+  "Fall-run Diversity Group Optimized", 
+  "Fall-run Optimized - Beakes", 
+  "Fall-run Optimized - Bilski"
+)
+
+
+actions_summary <-
+  actions %>% 
   mutate(action_occured = ifelse(!is.na(action), TRUE, FALSE), 
          scenario = scenario_names[scenario]) %>% 
   group_by(watershed, scenario) %>% 
@@ -48,16 +121,10 @@ actions_summary <- actions %>%
   spread(scenario, total_actions) %>% 
   mutate(watershed = factor(watershed, levels = watershed_order)) %>% 
   arrange(watershed) %>% 
-  filter(!(watershed %in% c('Yolo Bypass', 'Sutter Bypass')))
+  filter(!(watershed %in% c('Yolo Bypass', 'Sutter Bypass'))) %>% 
+  select(watershed, scenario_names_levels[-1])
 
-names(actions_summary) <- c(
-  "Watershed", 
-  "Maximum </br> Adults", 
-  "Maximum Adults </br> with Diversity Groups", 
-  "Maximum Adults </br> with No Hatchery Streams", 
-  "Maximum Adults </br> with Only Hatchery Streams", 
-  "Minimum </br> Adults", 
-  "Minimum Adults </br> with Diversity Groups")
+names(actions_summary) <- action_summary_colnames
 
 sr_exists <- cvpiaHabitat::modeling_exist %>% 
   select(Watershed, SR_fry) %>% 
@@ -82,7 +149,7 @@ valley_wide_biomass <- juv_biomass_chipps %>%
   summarise(juv_biomass = sum(biomass))
 
 no_action_end_biomass <- valley_wide_biomass %>% 
-  filter(scenario == 'NoActions', year == 25) %>% 
+  filter(scenario == 'No Restoration Actions', year == 25) %>% 
   pull(juv_biomass)
 
 biomass <- valley_wide_biomass %>% 
@@ -90,7 +157,7 @@ biomass <- valley_wide_biomass %>%
   ungroup() %>% 
   mutate(no_action_end = no_action_end_biomass,
          `Juvenile Biomass at Chipps` = 
-           paste(round(((juv_biomass - no_action_end) / no_action_end) * 100, 1), '%'),
+           round(((juv_biomass - no_action_end) / no_action_end) * 100, 1),
          Scenario = scenario_names[scenario]) %>% 
   select(Scenario, `Juvenile Biomass at Chipps`)
 
@@ -99,22 +166,27 @@ valley_wide_nat_spawners <- nat_spawners %>%
   summarise(nat_spawners = sum(nat_spawners))
 
 no_action_end_nat_spawners <- valley_wide_nat_spawners %>% 
-  filter(scenario == 'NoActions', year == 25) %>% 
+  filter(scenario == 'No Restoration Actions', year == 25) %>% 
   pull(nat_spawners)
+
 
 spawners <- valley_wide_nat_spawners %>% 
   filter(year == 25) %>% 
   ungroup() %>% 
   mutate(no_action_end = no_action_end_nat_spawners,
          `Natural Spawners` = 
-           paste(round(((nat_spawners - no_action_end) / no_action_end) * 100, 1), '%'),
+           round(((nat_spawners - no_action_end) / no_action_end) * 100, 1),
          Scenario = scenario_names[scenario]) %>% 
   select(Scenario, `Natural Spawners`)
 
 percent_change_from_no_action <- biomass %>% 
   left_join(spawners) %>% 
-  filter(Scenario != "No Actions")
-  
+  filter(Scenario != "No Restoration Actions") %>% 
+  mutate(Scenario = factor(Scenario, levels = scenario_names_levels), 
+         `Juvenile Biomass at Chipps` = `Juvenile Biomass at Chipps`/100, 
+         `Natural Spawners` = `Natural Spawners`/100) %>% 
+  arrange(Scenario)
+
 
 
 

@@ -1,6 +1,6 @@
 server <- function(input, output) {
   
-  selected_scenario <- reactive({
+  fall_selected_scenario <- reactive({
     idx <- input$percent_change_table_rows_selected
     scenario_table_name <- percent_change_from_no_action[idx, ]$Scenario
     scenario_names_to_scenario[scenario_table_name]
