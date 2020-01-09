@@ -7,20 +7,20 @@ library(stringr)
 library(DT)
 
 actions <- bind_rows(
-  # read_rds('data/actions.rds'),
-  read_rds('data/fall-run-actions.rds')
+  read_rds('data/fall-run-actions.rds') %>% mutate(model = "Fall Run"), 
+  # read in the rest with of the files withthe approapriate mutate statement
 )
 
 # diversity_groups <- read_rds('data/diversity_groups.rds')
 juv_biomass_chipps <- bind_rows(
-  # read_rds('data/juv_biomass_chipps.rds'), 
-  read_rds('data/fall-run-juv-biomass-chipps.rds')
+  read_rds('data/fall-run-juv-biomass-chipps.rds') %>% mutate(model = "Fall Run"), 
+  read_rds('data/spring_run_juv_biomass_chipps.rds') %>% mutate(model = "Spring Run")
+  # read in the rest of the files with the appropriate mutate statement
 )
 nat_spawners <- bind_rows(
-  # read_rds('data/nat_spawners.rds'), 
   read_rds('data/fall-run-nat-spawners.rds')
+  # read in the rest of the files with the appropriate mutate statement
 )
-# viability <- read_rds('data/viability.rds'fall_run_scenario_paths)
 
 watershed_order <- unique(actions$watershed)
 
@@ -143,31 +143,36 @@ units <- c(rep('acres', 3), '%')
 names(units) <- c('Spawning Habitat', 'Inchannel Rearing Habitat', 
                   'Floodplain Habitat', 'Survival')
 
-# example stats ----
+# once the new data has been read in, we can recompute these 
+# stats ----
 valley_wide_biomass <- juv_biomass_chipps %>% 
-  group_by(scenario, year) %>% 
-  summarise(juv_biomass = sum(biomass))
+  group_by(model, scenario, year) %>% 
+  summarise(juv_biomass = sum(biomass)) %>% 
+  ungroup()
 
 no_action_end_biomass <- valley_wide_biomass %>% 
   filter(scenario == 'No Restoration Actions', year == 25) %>% 
-  pull(juv_biomass)
+  select(model, no_action_end_biomass = juv_biomass)
 
 biomass <- valley_wide_biomass %>% 
   filter(year == 25) %>% 
-  ungroup() %>% 
+  ungroup() %>%
+  left_join(no_action_end_biomass, by = c("model" = "model")) %>% 
   mutate(no_action_end = no_action_end_biomass,
          `Juvenile Biomass at Chipps` = 
            round(((juv_biomass - no_action_end) / no_action_end) * 100, 1),
          Scenario = scenario_names[scenario]) %>% 
   select(Scenario, `Juvenile Biomass at Chipps`)
 
+#  change this to reflect the changes in the biomass code
+# after you have combined the three model runs in line 20
 valley_wide_nat_spawners <- nat_spawners %>%
   group_by(scenario, year) %>% 
   summarise(nat_spawners = sum(nat_spawners))
 
 no_action_end_nat_spawners <- valley_wide_nat_spawners %>% 
   filter(scenario == 'No Restoration Actions', year == 25) %>% 
-  pull(nat_spawners)
+  select(model, no_action_end_biomass = juv_biomass)
 
 
 spawners <- valley_wide_nat_spawners %>% 
@@ -179,6 +184,8 @@ spawners <- valley_wide_nat_spawners %>%
          Scenario = scenario_names[scenario]) %>% 
   select(Scenario, `Natural Spawners`)
 
+
+# this is the table that is shown on the app
 percent_change_from_no_action <- biomass %>% 
   left_join(spawners) %>% 
   filter(Scenario != "No Restoration Actions") %>% 
@@ -187,8 +194,11 @@ percent_change_from_no_action <- biomass %>%
          `Natural Spawners` = `Natural Spawners`/100) %>% 
   arrange(Scenario)
 
+fall_run <- percent_change_from_no_action %>% 
+  filter(model == "Fall Run")
 
+spring_run <- percent_change_from_no_action %>% 
+  filter(model == "Spring Run")
 
-
-
-
+winter_run <- percent_change_from_no_action %>% 
+  filter(model == "Winter Run")
