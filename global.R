@@ -167,7 +167,7 @@ biomass <- valley_wide_biomass %>%
          `Juvenile Biomass at Chipps` = 
            round(((juv_biomass - no_action_end) / no_action_end) * 100, 1),
          Scenario = scenario_names[scenario]) %>% 
-  select(Scenario, `Juvenile Biomass at Chipps`)
+  select(model, Scenario, `Juvenile Biomass at Chipps`)
 
 #  change this to reflect the changes in the biomass code
 # after you have combined the three model runs in line 20
@@ -178,18 +178,18 @@ valley_wide_nat_spawners <- nat_spawners %>%
 
 no_action_end_nat_spawners <- valley_wide_nat_spawners %>% 
   filter(scenario == 'No Restoration Actions', year == 25) %>% 
-  select(model, no_action_end_biomass = juv_biomass)
+  select(model, no_action_end_nat_spawners = nat_spawners)
 
 
 spawners <- valley_wide_nat_spawners %>% 
   filter(year == 25) %>% 
   ungroup() %>% 
-  left_join(no_action_nat_spawners, by = c("model" = "model")) %>% 
+  left_join(no_action_end_nat_spawners, by = c("model" = "model")) %>% 
   mutate(no_action_end = no_action_end_nat_spawners,
          `Natural Spawners` = 
            round(((nat_spawners - no_action_end) / no_action_end) * 100, 1),
          Scenario = scenario_names[scenario]) %>% 
-  select(Scenario, `Natural Spawners`)
+  select(Scenario, model, `Natural Spawners`)
 
 
 # this is the table that is shown on the app
