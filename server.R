@@ -20,20 +20,25 @@ server <- function(input, output) {
 
   
   output$fall_run_percent_change <- DT::renderDataTable(
-    fall_run_percent_change, 
-    selection = "single",
-    options = list(dom = "t"))
+    datatable(fall_run_percent_change %>% select(-model), 
+              rownames=FALSE,
+              selection = "single",
+              options = list(dom = "t"))%>% formatPercentage(c('Juvenile Biomass at Chipps', 'Natural Spawners')))
+    
+  
   
   output$spring_run_percent_change <- DT::renderDataTable(
-    spring_run_percent_change, 
-    selection = "single",
-    options = list(dom = "t"))
+    datatable(spring_run_percent_change %>% select(-model), 
+              rownames=FALSE,
+              selection = "single",
+              options = list(dom = "t"))%>% formatPercentage(c('Juvenile Biomass at Chipps', 'Natural Spawners')))
   
   
   output$winter_run_percent_change <- DT::renderDataTable(
-    winter_run_percent_change, 
-    selection = "single",
-    options = list(dom = "t"))
+    datatable(winter_run_percent_change %>% select(-model), 
+              rownames=FALSE,
+              selection = "single",
+              options = list(dom = "t"))%>% formatPercentage(c('Juvenile Biomass at Chipps', 'Natural Spawners')))
   
   
   

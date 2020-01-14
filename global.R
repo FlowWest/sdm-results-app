@@ -169,6 +169,8 @@ biomass <- valley_wide_biomass %>%
          Scenario = scenario_names[scenario]) %>% 
   select(model, Scenario, `Juvenile Biomass at Chipps`)
 
+
+
 #  change this to reflect the changes in the biomass code
 # after you have combined the three model runs in line 20
 valley_wide_nat_spawners <- nat_spawners %>%
