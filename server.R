@@ -19,10 +19,25 @@ server <- function(input, output) {
   })
 
   
-  output$percent_change_table <- DT::renderDataTable(
-    percent_change_from_no_action, 
+  output$fall_run_percent_change <- DT::renderDataTable(
+    fall_run_percent_change, 
     selection = "single",
     options = list(dom = "t"))
+  
+  output$spring_run_percent_change <- DT::renderDataTable(
+    spring_run_percent_change, 
+    selection = "single",
+    options = list(dom = "t"))
+  
+  
+  output$winter_run_percent_change <- DT::renderDataTable(
+    winter_run_percent_change, 
+    selection = "single",
+    options = list(dom = "t"))
+  
+  
+  
+  
   
   output$actions_plot <- renderPlotly({
     

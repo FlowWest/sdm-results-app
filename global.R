@@ -201,11 +201,17 @@ percent_change_from_no_action <- biomass %>%
          `Natural Spawners` = `Natural Spawners`/100) %>% 
   arrange(Scenario)
 
-fall_run <- percent_change_from_no_action %>% 
+fall_run_percent_change <- percent_change_from_no_action %>% 
   filter(model == "Fall Run")
 
-spring_run <- percent_change_from_no_action %>% 
+spring_run_percent_change <- percent_change_from_no_action %>% 
   filter(model == "Spring Run")
 
-winter_run <- percent_change_from_no_action %>% 
+winter_run_percent_change <- percent_change_from_no_action %>% 
   filter(model == "Winter Run")
+
+
+
+
+
+
